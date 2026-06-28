@@ -350,8 +350,8 @@ struct DetailView: View {
             // Header band
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(el.sym).font(.system(size: 52, weight: .bold))
-                    Text(el.name).font(.title2.weight(.semibold))
+                    Text(el.sym).font(.system(size: 52, weight: .bold)).textSelection(.enabled)
+                    Text(el.name).font(.title2.weight(.semibold)).textSelection(.enabled)
                     Text(el.cat.display).font(.subheadline).opacity(0.85)
                 }
                 Spacer()
