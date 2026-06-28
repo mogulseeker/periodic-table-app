@@ -1,0 +1,10 @@
+# Build output
+*.app/
+build/
+.DS_Store
+
+# Swift / Xcode noise (in case a project is added later)
+*.swiftpm
+.build/
+DerivedData/
+xcuserdata/
