@@ -589,9 +589,22 @@ struct ContentView: View {
             CategoryLegend(selected: $selectedCategory).padding(.horizontal, 16).padding(.bottom, 12)
         }
         .frame(minWidth: 1180, minHeight: 820)
-        .sheet(item: $selected) { el in
-            DetailView(el: el) { selected = nil }
+        .overlay {
+            if let el = selected {
+                ZStack {
+                    // Dimmed backdrop — click anywhere outside the panel to dismiss.
+                    Color.black.opacity(0.35)
+                        .ignoresSafeArea()
+                        .onTapGesture { selected = nil }
+                    DetailView(el: el) { selected = nil }
+                        .background(Color(NSColor.windowBackgroundColor))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .shadow(radius: 30)
+                }
+                .transition(.opacity)
+            }
         }
+        .animation(.easeInOut(duration: 0.15), value: selected != nil)
     }
 }
 
