@@ -388,14 +388,15 @@ struct DetailView: View {
                 }
                 .padding(20)
             }
-
-            HStack {
-                Spacer()
-                Button("Close") { onClose() }.keyboardShortcut(.defaultAction)
-            }
-            .padding(14)
         }
         .frame(width: 460, height: 600)
+        // Keep keyboard dismissal (Esc / Enter) now that the button is gone.
+        .overlay(
+            Button("", action: onClose).keyboardShortcut(.cancelAction).hidden()
+        )
+        .overlay(
+            Button("", action: onClose).keyboardShortcut(.defaultAction).hidden()
+        )
     }
 }
 
