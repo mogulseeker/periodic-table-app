@@ -392,10 +392,6 @@ struct DetailView: View {
                     DetailRow(label: "Classification", value: el.cat.display)
                     DetailRow(label: "Oxidation states", value: el.ox.isEmpty ? "—" : el.ox.replacingOccurrences(of: "-", with: "−"))
                     Divider().padding(.vertical, 2)
-                    DetailRow(label: "Protons (p⁺)", value: "\(el.protons)")
-                    DetailRow(label: "Neutrons (n⁰)", value: "\(el.neutrons)  (for A ≈ \(el.massNumber))")
-                    DetailRow(label: "Electrons (e⁻)", value: "\(el.electrons)  (neutral atom)")
-                    Divider().padding(.vertical, 2)
                     DetailRow(label: "Group", value: el.group.map { "\($0)" } ?? (el.cat == .lanth ? "Lanthanide series" : el.cat == .actin ? "Actinide series" : "—"))
                     DetailRow(label: "Period", value: "\(el.period)")
                     DetailRow(label: "Block", value: el.block + "-block")
@@ -407,6 +403,10 @@ struct DetailView: View {
                     DetailRow(label: "Melting point", value: kc(el.melt))
                     DetailRow(label: "Boiling point", value: kc(el.boil))
                     DetailRow(label: "Density", value: el.density.map { String(format: "%.3f g/cm³", $0) } ?? "—")
+                    Divider().padding(.vertical, 2)
+                    DetailRow(label: "Protons (p⁺)", value: "\(el.protons)")
+                    DetailRow(label: "Neutrons (n⁰)", value: "\(el.neutrons)  (for A ≈ \(el.massNumber))")
+                    DetailRow(label: "Electrons (e⁻)", value: "\(el.electrons)  (neutral atom)")
                 }
                 .padding(20)
             }
