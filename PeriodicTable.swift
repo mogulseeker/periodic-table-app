@@ -81,6 +81,23 @@ struct Element: Identifiable {
     // Mass number A (most common / most stable isotope, rounded)
     var massNumber: Int { Int(mass.rounded()) }
 
+    // Subatomic particle counts for the neutral atom.
+    var protons: Int { z }
+    var electrons: Int { z }
+    var neutrons: Int { massNumber - z }
+
+    // Full electron configuration, expanding any [NobleGas] core to its 1s… form.
+    var fullEconf: String {
+        func expand(_ cfg: String) -> String {
+            guard cfg.hasPrefix("["), let close = cfg.firstIndex(of: "]") else { return cfg }
+            let sym = String(cfg[cfg.index(after: cfg.startIndex)..<close])
+            let rest = cfg[cfg.index(after: close)...].trimmingCharacters(in: .whitespaces)
+            guard let core = ELEMENTS.first(where: { $0.sym == sym }) else { return cfg }
+            return (expand(core.econf) + " " + rest).trimmingCharacters(in: .whitespaces)
+        }
+        return expand(econf)
+    }
+
     // The differentiating (filling) subshell label, e.g. "1s", "2p", "3d", "4f"
     var subshell: String {
         switch block {
@@ -369,17 +386,22 @@ struct DetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 9) {
                     DetailRow(label: "Atomic number (Z)", value: "\(el.z)")
-                    DetailRow(label: "Mass number (A)", value: "≈ \(el.massNumber)  (most common isotope)")
-                    DetailRow(label: "Standard atomic weight", value: String(format: "%.4g u", el.mass))
-                    DetailRow(label: "Natural / standard state", value: el.state.display + "  (at 25 °C)")
-                    DetailRow(label: "Category", value: el.cat.display)
-                    DetailRow(label: "Charges (oxidation states)", value: el.ox.isEmpty ? "—" : el.ox.replacingOccurrences(of: "-", with: "−"))
+                    DetailRow(label: "Mass number (A)", value: "≈ \(el.massNumber)  (most abundant isotope)")
+                    DetailRow(label: "Relative atomic mass", value: String(format: "%.4g u", el.mass))
+                    DetailRow(label: "Standard state (25 °C)", value: el.state.display)
+                    DetailRow(label: "Classification", value: el.cat.display)
+                    DetailRow(label: "Oxidation states", value: el.ox.isEmpty ? "—" : el.ox.replacingOccurrences(of: "-", with: "−"))
+                    Divider().padding(.vertical, 2)
+                    DetailRow(label: "Protons (p⁺)", value: "\(el.protons)")
+                    DetailRow(label: "Neutrons (n⁰)", value: "\(el.neutrons)  (for A ≈ \(el.massNumber))")
+                    DetailRow(label: "Electrons (e⁻)", value: "\(el.electrons)  (neutral atom)")
                     Divider().padding(.vertical, 2)
                     DetailRow(label: "Group", value: el.group.map { "\($0)" } ?? (el.cat == .lanth ? "Lanthanide series" : el.cat == .actin ? "Actinide series" : "—"))
                     DetailRow(label: "Period", value: "\(el.period)")
                     DetailRow(label: "Block", value: el.block + "-block")
-                    DetailRow(label: "Electron group (filling subshell)", value: el.subshell)
-                    DetailRow(label: "Electron configuration", value: el.econf)
+                    DetailRow(label: "Differentiating subshell", value: el.subshell)
+                    DetailRow(label: "Electron configuration (condensed)", value: el.econf)
+                    DetailRow(label: "Electron configuration (full)", value: el.fullEconf)
                     Divider().padding(.vertical, 2)
                     DetailRow(label: "Electronegativity (Pauling)", value: el.en.map { String(format: "%.2f", $0) } ?? "—")
                     DetailRow(label: "Melting point", value: kc(el.melt))
